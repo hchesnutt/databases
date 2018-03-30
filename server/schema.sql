@@ -9,8 +9,8 @@ DROP TABLE IF EXISTS messages;
 CREATE TABLE messages (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   username_id INTEGER,
-  room_id INTEGER,
-  contents VARCHAR(200)
+  contents VARCHAR(200),
+  roomname VARCHAR(24)
 );
 
 /* Create other tables and define schemas for them here! */
@@ -19,19 +19,11 @@ CREATE TABLE usernames (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(24)
 );
-
-DROP TABLE IF EXISTS rooms;
-CREATE TABLE rooms (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  rooms VARCHAR(24)
-);
-
 -- ---
 -- Foreign Keys 
 -- ---
 
 ALTER TABLE `messages` ADD FOREIGN KEY (username_id) REFERENCES `usernames` (`id`);
-ALTER TABLE `messages` ADD FOREIGN KEY (room_id) REFERENCES `rooms` (`id`);
 
 
 /*  Execute this file from the command line by typing:
