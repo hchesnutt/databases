@@ -23,14 +23,6 @@ app.use('/classes', router);
 
 // Serve the client files
 app.use(express.static(__dirname + '/../client'));
-
-// deal with options request
-app.options('/*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-  res.send(200);
-});
   
 // If we are being run directly, run the server.
 if (!module.parent) {

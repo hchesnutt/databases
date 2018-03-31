@@ -10,5 +10,8 @@ router.get('/users', controller.users.get);
 
 router.post('/users', controller.users.post);
 
+// deal with options request
+router.options('/*', controller.options);
+
 
 module.exports = router;

@@ -17,7 +17,8 @@ CREATE TABLE messages (
 DROP TABLE IF EXISTS usernames;
 CREATE TABLE usernames (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(24)
+  username VARCHAR(24),
+  UNIQUE KEY (username)
 );
 -- ---
 -- Foreign Keys 
