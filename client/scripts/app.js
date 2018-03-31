@@ -25,7 +25,7 @@ var app = {
     app.$roomSelect.on('change', app.handleRoomChange);
 
     // Fetch previous messages
-    app.startSpinner();
+    // app.startSpinner();
     app.fetch(false);
 
     // Poll for new messages
@@ -35,7 +35,7 @@ var app = {
   },
 
   send: function (message) {
-    app.startSpinner();
+    // app.startSpinner();
 
     // POST the message to the server
     $.ajax({
@@ -61,6 +61,7 @@ var app = {
       url: app.server,
       type: 'GET',
       success: function (data) {
+        console.log(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
         // Store messages for caching later
@@ -106,9 +107,9 @@ var app = {
     }
 
     // Make it scroll to the top
-    if (animate) {
-      $('body').animate({ scrollTop: '0px' }, 'fast');
-    }
+    // if (animate) {
+    //   $('body').animate({ scrollTop: '0px' }, 'fast');
+    // }
   },
 
   renderRoomList: function (messages) {
@@ -200,7 +201,7 @@ var app = {
         app.$roomSelect.val(roomname);
       }
     } else {
-      app.startSpinner();
+      // app.startSpinner();
       // Store as undefined for empty names
       app.roomname = app.$roomSelect.val();
     }
