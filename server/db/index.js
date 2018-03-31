@@ -9,7 +9,6 @@ mysql.createConnection({
   database: 'chat'
 }).then(conn => {
   module.exports.connection = conn;
-  console.log(module.exports.connection);
 }).catch(err => console.log('CONNECTION ERROR:', err));
 
 

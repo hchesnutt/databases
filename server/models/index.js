@@ -1,77 +1,48 @@
 const Promise = require('bluebird');
-const connection = require('../db');
-console.log('connection:', connection);
+const db = require('../db');
 
-getUserId = (username, callback) => {
+getUserId = async (username, callback) => {
   const query = 'SELECT * FROM usernames WHERE username = (?);';
   const values = [username];
-  connection.query(query, values, (err, results, fields) => {
-    if (err) {
-      console.log('ERROR GETTING ID:', err);
-    }
-    callback(err, results[0].id);
-  });
+  const results = await db.connection.query(query, values).catch(err => console.log(err));
+  return results[0].id;
 };
-var getUserIdAsync = Promise.promisify(getUserId);
 
 
 module.exports = {
   messages: {
-    get: function () {
-      // retrieve usernames from messages
-      const query = 'SELECT * FROM messages;';
-      connection.query(query, (err, results, fields) => {
-        if (err) {
-          console.log('ERROR GETTING MESSAGES:', err);
-        }
-      });
-      // what do you get back?
-      // TODO: parse and return query results
+    get: async () => {
+        const query = `SELECT u.username, m.contents AS text, m.roomname 
+                      FROM messages m 
+                      LEFT JOIN usernames u ON m.username_id = u.id;`;
+        const messages = await db.connection.query(query).catch(err => console.log('Error:', err));
+        console.log(messages);
+        return messages;
     },
-    post: function (message) {
-      let {username, text, roomname} = message;
-      // retrieve user_id from users
-      getUserIdAsync(username)
-        .then(id => {
-          const values = [id, text, roomname];
-          const query = `INSERT INTO messages 
-            (username_id, contents, roomname) 
-            VALUES (?, ?, ?)`;
-          // insert into messages
-          connection.query(query, values, (err, results, fields) => {
-            if (err) {
-              console.log('ERROR INSERTING A MESSAGE:', err);
-            }
-          });    
-        }).catch(err => console.log(err));
+    post: async message => {
+      const {username, text, roomname} = message;
+      const id = await getUserId(username);
+      const values = [id, text, roomname];
+      const query = `INSERT IGNORE INTO messages (username_id, contents, roomname) VALUES (?, ?, ?)`;
+      const results = await db.connection.query(query, values).catch(err => console.log('Error:', err));
+      return results;
     }
   },
 
   users: {
     get: async () => {
-      let usernames;
-      // retrieve usernames from users
       const query = 'SELECT username FROM usernames;';
-      let rows = await connection.query(query).catch(err => console.log(err));
-      usernames = rows.map(rowEntry => {
-        return rowEntry.username;
-      });
+      const results = await db.connection.query(query).catch(err => console.log('Error:', err));
+      const usernames = results.map(rowEntry => rowEntry.username);
       return usernames;
     },
 
     
-    post: function (username) {
+    post: async (username) => {
       const query = 'INSERT IGNORE INTO usernames (username) VALUE (?);';
       const values = [username];
-      // insert in to table users
-      connection.query(query, values, (err, results, fields) => {
-        if (err) {
-          console.log('ERROR POSTING USERNAME:', err);
-        }
-      });
+      let result = await db.connection.query(query, values).catch(err => console.log('Error:', err));
+      return result;
     }
   }
 };
-
-
-module.exports.users.get().then(results => console.log(results));
